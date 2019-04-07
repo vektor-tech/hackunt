@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "build": "webpack -p"
+    "build": "webpack -p",
+    "babel-build": "node -r babel-register ./node_modules/webpack/bin/webpack"
   },
   "repository": {
     "type": "git",
