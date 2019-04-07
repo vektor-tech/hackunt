@@ -95,7 +95,7 @@ export default class Profile extends Component {
     let reader = new FileReader();
     reader.onloadend = function() {
       // console.log(reader.result);
-      writeFile(files[0].name, reader.result, { encrypt: true })
+      writeFile(files[0].name, reader.result, { encrypt: false })
         .then(this.fetchData())
         .finally(() => this.setState({ isLoading: false }));
     }.bind(this);
