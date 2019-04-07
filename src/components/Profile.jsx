@@ -21,6 +21,7 @@ export default class Profile extends Component {
 
     this.state = {
       currentImage: "",
+      doctorName: "",
       files: [],
       person: {
         name() {
@@ -100,8 +101,6 @@ export default class Profile extends Component {
         .finally(() => this.setState({ isLoading: false }));
     }.bind(this);
     reader.readAsDataURL(files[0]);
-
-    // console.log(files[0]);
   }
 
   downloadFile(filename) {
@@ -109,6 +108,17 @@ export default class Profile extends Component {
     readFile(filename, { decrypt: true }).then(res => {
       this.setState({ currentImage: res });
     });
+  }
+
+  onShare(filename) {
+    //
+    if (!filename || !this.state.doctorName) return;
+
+    console.log(filename, this.state.doctorName);
+
+    // 
+    // 
+    // 
   }
 
   render() {
@@ -140,12 +150,10 @@ export default class Profile extends Component {
           <div className="col-md-12 statuses">
             {this.state.isLoading && <span>Loading...</span>}
             {this.state.statuses.map(status => (
-              <div
-                className="status"
-                key={status.id}
-                onClick={() => this.downloadFile(status)}
-              >
+              <div className="status" key={status.id}>
                 {status}
+                <button onClick={() => this.downloadFile(status)}>View</button>
+                <button onClick={() => this.onShare(status)}>Share</button>
               </div>
             ))}
           </div>
@@ -156,15 +164,11 @@ export default class Profile extends Component {
               onChange={this.onImageChange}
               className="btn btn-primary btn-lg"
             />
+            <input
+              type="text"
+              onChange={e => this.setState({ doctorName: e.target.value })}
+            />
           </div>
-          {/* <div className="col-md-12">
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={e => this.handleNewStatusSubmit(e)}
-            >
-              Submit
-            </button>
-          </div> */}
         </div>
         <p className="lead">
           <button
