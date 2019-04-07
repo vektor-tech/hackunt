@@ -116,9 +116,9 @@ export default class Profile extends Component {
 
     console.log(filename, this.state.doctorName);
 
-    // 
-    // 
-    // 
+    //
+    //
+    //
   }
 
   render() {
@@ -126,39 +126,39 @@ export default class Profile extends Component {
     const { person } = this.state;
     return !isSignInPending() ? (
       <div className="panel-welcome" id="section-2">
-        <div className="avatar-section">
-          <img
-            src={person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage}
-            className="img-rounded avatar"
-            id="avatar-image"
-          />
-        </div>
-        <h1>
-          Hello,{" "}
-          <span id="heading-name">
-            {person.name() ? person.name() : "Nameless Person"}
-          </span>
-          !
-        </h1>
-        {this.state.currentImage &&
-          (this.state.currentImage.startsWith("data:image") ? (
-            <img style={{ height: "30vh" }} src={this.state.currentImage} />
-          ) : (
-            <div>{this.state.currentImage}</div>
-          ))}
-        <div className="new-status">
-          <div className="col-md-12 statuses">
-            {this.state.isLoading && <span>Loading...</span>}
-            {this.state.statuses.map(status => (
-              <div className="status" key={status.id}>
-                {status}
-                <button onClick={() => this.downloadFile(status)}>View</button>
-                <button onClick={() => this.onShare(status)}>Share</button>
-              </div>
-            ))}
+        <div className="left">
+          <div className="avatar-section">
+            <img
+              src={
+                person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage
+              }
+              className="img-rounded avatar"
+              id="avatar-image"
+            />
           </div>
-          <div className="col-md-12" />
-          <div className="col-md-12">
+          <h1>
+            Hello,{" "}
+            <span id="heading-name">
+              {person.name() ? person.name() : "Nameless Person"}
+            </span>
+            !
+          </h1>
+          <p className="lead">
+            <button
+              className="btn btn-primary btn-lg"
+              id="signout-button"
+              onClick={handleSignOut.bind(this)}
+            >
+              Logout
+            </button>
+          </p>
+          {this.state.currentImage &&
+            (this.state.currentImage.startsWith("data:image") ? (
+              <img style={{ height: "30vh" }} src={this.state.currentImage} />
+            ) : (
+              <div>{this.state.currentImage}</div>
+            ))}
+          <div className="image-doctor">
             <input
               type="file"
               onChange={this.onImageChange}
@@ -166,19 +166,34 @@ export default class Profile extends Component {
             />
             <input
               type="text"
+              placeholder="Doctor's Name"
               onChange={e => this.setState({ doctorName: e.target.value })}
             />
           </div>
         </div>
-        <p className="lead">
-          <button
-            className="btn btn-primary btn-lg"
-            id="signout-button"
-            onClick={handleSignOut.bind(this)}
-          >
-            Logout
-          </button>
-        </p>
+        <div className="new-status">
+          <div className="col-md-12 statuses">
+            {this.state.isLoading && <span>Loading...</span>}
+            {this.state.statuses.map(status => (
+              <div className="status" key={status.id}>
+                <p style={{ marginLeft: 5 }}>{status}</p>
+                <button
+                  className="btn btn-primary btn-lg"
+                  onClick={() => this.downloadFile(status)}
+                >
+                  View
+                </button>
+                <button
+                  className="btn btn-primary btn-lg"
+                  onClick={() => this.onShare(status)}
+                >
+                  Share
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="col-md-12" />
+        </div>
       </div>
     ) : null;
   }
