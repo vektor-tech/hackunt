@@ -94,14 +94,14 @@ export default class Profile extends Component {
 
     let reader = new FileReader();
     reader.onloadend = function() {
-      console.log(reader.result);
-      writeFile(files[0].name, reader.result, { encrypt: true }).then(
-        this.fetchData()
-      );
+      // console.log(reader.result);
+      writeFile(files[0].name, reader.result, { encrypt: true })
+        .then(this.fetchData())
+        .finally(() => this.setState({ isLoading: false }));
     }.bind(this);
     reader.readAsDataURL(files[0]);
 
-    console.log(files[0]);
+    // console.log(files[0]);
   }
 
   downloadFile(filename) {

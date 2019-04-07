@@ -39,6 +39,7 @@
     "bootstrap": "^3.3.7",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-image-file": "^0.3.0"
+    "react-image-file": "^0.3.0",
+    "mime": ">=1.4.1"
   }
 }
