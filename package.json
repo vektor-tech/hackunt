@@ -31,12 +31,14 @@
     "style-loader": "^0.16.1",
     "url-loader": "^0.5.8",
     "webpack": "^2.3.3",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": ">=3.1.11"
   },
   "dependencies": {
     "blockstack": "^18.0.4",
+    "blockstack-large-storage": "^0.0.6",
     "bootstrap": "^3.3.7",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-image-file": "^0.3.0"
   }
 }

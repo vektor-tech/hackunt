@@ -1,12 +1,16 @@
 import React, { Component } from "react";
+// import ImageLoader from "react-image-file"
+import { writeFile, readFile } from "blockstack-large-storage";
 import {
   isSignInPending,
   loadUserData,
   Person,
   getFile,
   putFile,
-  lookupProfile
+  lookupProfile,
+  listFiles
 } from "blockstack";
+import { height } from "window-size";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -16,6 +20,8 @@ export default class Profile extends Component {
     super(props);
 
     this.state = {
+      currentImage: "",
+      files: [],
       person: {
         name() {
           return "Anonymous";
@@ -30,6 +36,8 @@ export default class Profile extends Component {
       statusIndex: 0,
       isLoading: false
     };
+
+    this.onImageChange = this.onImageChange.bind(this);
   }
 
   handleNewStatusChange(event) {
@@ -64,20 +72,43 @@ export default class Profile extends Component {
 
   fetchData() {
     this.setState({ isLoading: true });
-    const options = { decrypt: true };
-    getFile("statuses.json", options)
-      .then(file => {
-        var statuses = JSON.parse(file || "[]");
-        this.setState({
-          person: new Person(loadUserData().profile),
-          username: loadUserData().username,
-          statusIndex: statuses.length,
-          statuses: statuses
-        });
-      })
-      .finally(() => {
-        this.setState({ isLoading: false });
+    listFiles(name => {
+      this.setState(function(state, _) {
+        return {
+          person: state.person || new Person(loadUserData().profile),
+          username: state.username || loadUserData().username,
+          statusIndex: state.statuses.length + 1,
+          statuses: [name, ...state.statuses]
+        };
       });
+      return true;
+    })
+      .then(res => console.log("res", res))
+      .catch(err => console.error(err))
+      .finally(() => this.setState({ isLoading: false }));
+  }
+
+  onImageChange(e) {
+    const files = Array.from(e.target.files);
+    this.setState({ isLoading: true });
+
+    let reader = new FileReader();
+    reader.onloadend = function() {
+      console.log(reader.result);
+      writeFile(files[0].name, reader.result, { encrypt: true }).then(
+        this.fetchData()
+      );
+    }.bind(this);
+    reader.readAsDataURL(files[0]);
+
+    console.log(files[0]);
+  }
+
+  downloadFile(filename) {
+    // download file
+    readFile(filename, { decrypt: true }).then(res => {
+      this.setState({ currentImage: res });
+    });
   }
 
   render() {
@@ -99,31 +130,41 @@ export default class Profile extends Component {
           </span>
           !
         </h1>
+        {this.state.currentImage &&
+          (this.state.currentImage.startsWith("data:image") ? (
+            <img style={{ height: "30vh" }} src={this.state.currentImage} />
+          ) : (
+            <div>{this.state.currentImage}</div>
+          ))}
         <div className="new-status">
           <div className="col-md-12 statuses">
             {this.state.isLoading && <span>Loading...</span>}
             {this.state.statuses.map(status => (
-              <div className="status" key={status.id}>
-                {status.text}
+              <div
+                className="status"
+                key={status.id}
+                onClick={() => this.downloadFile(status)}
+              >
+                {status}
               </div>
             ))}
           </div>
+          <div className="col-md-12" />
           <div className="col-md-12">
-            <textarea
-              className="input-status"
-              value={this.state.newStatus}
-              onChange={e => this.handleNewStatusChange(e)}
-              placeholder="Enter a status"
+            <input
+              type="file"
+              onChange={this.onImageChange}
+              className="btn btn-primary btn-lg"
             />
           </div>
-          <div className="col-md-12">
+          {/* <div className="col-md-12">
             <button
               className="btn btn-primary btn-lg"
               onClick={e => this.handleNewStatusSubmit(e)}
             >
               Submit
             </button>
-          </div>
+          </div> */}
         </div>
         <p className="lead">
           <button
