@@ -122,8 +122,15 @@ export default class Profile extends Component {
       }, this.state.username, ${this.state.username}`
     );
 
-    fetch(
-      "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message",
+    // let client2 = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message"
+
+    let url = "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
+
+    if (!this.state.username.startsWith("sl_")) {
+      url = "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
+    } 
+
+    fetch(url,
       {
         method: "POST",
         headers: {
@@ -145,8 +152,13 @@ export default class Profile extends Component {
 
     console.log(filename, this.state.doctorName);
 
-    fetch(
-      "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message",
+    let url = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
+    
+    if (!this.state.username.startsWith("sl_")) {
+      url = "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
+    } 
+
+    fetch(url,
       {
         method: "POST",
         headers: {
