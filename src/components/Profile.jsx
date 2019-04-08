@@ -37,7 +37,8 @@ export default class Profile extends Component {
       statusIndex: 0,
       isLoading: false,
       shareResult: "",
-      secretPhrase: ""
+      secretPhrase: "",
+      patientUsername: ""
     };
 
     this.onImageChange = this.onImageChange.bind(this);
@@ -124,24 +125,24 @@ export default class Profile extends Component {
 
     // let client2 = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message"
 
-    let url = "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
+    let url =
+      "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
 
-    if (!this.state.username.startsWith("sl_")) {
-      url = "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
-    } 
+    if (this.state.patientUsername.startsWith("sl_")) {
+      url =
+        "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
+    }
 
-    fetch(url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          encrypted: this.state.secretPhrase,
-          doctor: this.state.username.split(".")[0]
-        })
-      }
-    )
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        encrypted: this.state.secretPhrase,
+        doctor: this.state.username.split(".")[0]
+      })
+    })
       .then(msg => msg.json())
       .then(data => this.setState({ currentImage: data.result }));
   }
@@ -152,24 +153,24 @@ export default class Profile extends Component {
 
     console.log(filename, this.state.doctorName);
 
-    let url = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
-    
-    if (!this.state.username.startsWith("sl_")) {
-      url = "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
-    } 
+    let url =
+      "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
 
-    fetch(url,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          file: filename,
-          doctor: this.state.doctorName
-        })
-      }
-    )
+    if (this.state.username.startsWith("sl_")) {
+      url =
+        "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
+    }
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        file: filename,
+        doctor: this.state.doctorName
+      })
+    })
       .then(msg => msg.json())
       .then(data => this.setState({ shareResult: data.result }));
   }
@@ -262,12 +263,19 @@ export default class Profile extends Component {
                 placeholder="File Secret Phrase"
                 onChange={e => this.setState({ secretPhrase: e.target.value })}
               />
+              <input
+                type="text"
+                placeholder="Patient's Username"
+                onChange={e =>
+                  this.setState({ patientUsername: e.target.value })
+                }
+              />
               <button
                 className="btn btn-primary btn-lg"
                 onClick={this.onDoctorView}
               >
                 View Patient File
-              </button>
+              </button>    
             </div>
           )}
           <div className="col-md-12" />
