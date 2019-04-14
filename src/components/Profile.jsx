@@ -7,6 +7,8 @@ import {
   getFile,
   listFiles
 } from "blockstack";
+import * as cryptico from "cryptico"
+import { putFile } from "blockstack/lib/storage";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -42,6 +44,7 @@ export default class Profile extends Component {
   // gets list of files from user's gaia hub
   fetchData() {
     this.setState({ isLoading: true, files: [] });
+
     listFiles(name => {
       this.setState({
         files: [name, ...this.state.files]
@@ -50,7 +53,37 @@ export default class Profile extends Component {
     })
       .then(res => console.log("Number of files: ", res))
       .catch(err => console.error(err))
-      .finally(() => this.setState({ isLoading: false }));
+      .finally(() => {
+        this.setState({ isLoading: false });
+        // checks if public & private files exists for the user
+        this.initialSetup();
+      });
+  }
+
+  initialSetup() {
+    // check for public & private
+
+    let found = 0;
+
+    for (let file of this.state.files) {
+      if (file == 'public.json' || file == 'private.json') found++;
+    }
+
+    // if not found generate public & private
+    if (found != 2) {
+      // now use RSA
+
+      let passphrase = loadUserData().appPrivateKey;
+
+      let privatekey = cryptico.generateRSAKey(passphrase, 1024);
+
+      let publickey = cryptico.publicKeyString(privatekey);
+
+      putFile("private.json", JSON.stringify(privatekey), { encrypt: true }).then(res => console.log(res)).catch(err => console.error(err))
+    
+      putFile("public.json", publickey, { encrypt: false }).then(res => console.log(res)).catch(err => console.error(err))
+
+    }
   }
 
   // whenever user clicks something to upload.
@@ -62,7 +95,7 @@ export default class Profile extends Component {
     reader.onloadend = function() {
       // console.log(reader.result);
       writeFile(files[0].name, reader.result, {
-        encrypt: false
+        encrypt: true
       })
         .then(this.fetchData())
         .finally(() => this.setState({ isLoading: false }));
@@ -79,11 +112,11 @@ export default class Profile extends Component {
   }
 
   onDoctorView() {
-    console.log(this.state.secretPhrase, this.state.username)
+    console.log(this.state.secretPhrase, this.state.username);
 
-    getFile("newtest.txt", {
+    getFile("public.json", {
       username: "sl_muedie.id.blockstack",
-      decrypt: true
+      decrypt: false
     }).then(res => {
       console.log(res);
       this.setState({ currentImage: res });
@@ -119,31 +152,22 @@ export default class Profile extends Component {
   }
 
   onShare(filename) {
-    //
     if (!filename || !this.state.doctorName) return;
 
     console.log(filename, this.state.doctorName);
 
-    // let url =
-    //   "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
+    getFile("public.json", {
+      username: `${this.state.doctorName}.id.blockstack`,
+      decrypt: false
+    }).then(rcvrpublickey => {
+      console.log("PUBLIC", rcvrpublickey);
 
-    // if (this.state.username.startsWith("sl_")) {
-    //   url =
-    //     "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
-    // }
+      readFile(filename, { decrypt: true }).then(filecontent => {
+        this.setState({ currentImage: res });
+      });
 
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     file: filename,
-    //     doctor: this.state.doctorName
-    //   })
-    // })
-    //   .then(msg => msg.json())
-    //   .then(data => this.setState({ shareResult: data.result }));
+    });
+
   }
 
   render() {
