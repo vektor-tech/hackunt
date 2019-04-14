@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-// import ImageLoader from "react-image-file"
 import { writeFile, readFile } from "blockstack-large-storage";
 import {
   isSignInPending,
   loadUserData,
   Person,
   getFile,
-  putFile,
-  lookupProfile,
   listFiles
 } from "blockstack";
-import { height } from "window-size";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -32,9 +28,7 @@ export default class Profile extends Component {
         }
       },
       username: "",
-      newStatus: "",
       statuses: [],
-      statusIndex: 0,
       isLoading: false,
       shareResult: "",
       secretPhrase: "",
@@ -45,54 +39,21 @@ export default class Profile extends Component {
     this.onDoctorView = this.onDoctorView.bind(this);
   }
 
-  handleNewStatusChange(event) {
-    this.setState({ newStatus: event.target.value });
-  }
-
-  handleNewStatusSubmit(event) {
-    this.saveNewStatus(this.state.newStatus);
-    this.setState({
-      newStatus: ""
-    });
-  }
-
-  saveNewStatus(statusText) {
-    let statuses = this.state.statuses;
-
-    let status = {
-      id: this.state.statusIndex++,
-      text: statusText.trim(),
-      created_at: Date.now()
-    };
-
-    statuses.unshift(status);
-
-    const options = { encrypt: false };
-    putFile("statuses.json", JSON.stringify(statuses), options).then(() => {
-      this.setState({
-        statuses: statuses
-      });
-    });
-  }
-
+  // gets list of files from user's gaia hub
   fetchData() {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, files: [] });
     listFiles(name => {
-      this.setState(function(state, _) {
-        return {
-          person: state.person || new Person(loadUserData().profile),
-          username: state.username || loadUserData().username,
-          statusIndex: state.statuses.length + 1,
-          statuses: [name, ...state.statuses]
-        };
+      this.setState({
+        files: [name, ...this.state.files]
       });
       return true;
     })
-      .then(res => console.log("res", res))
+      .then(res => console.log("Number of files: ", res))
       .catch(err => console.error(err))
       .finally(() => this.setState({ isLoading: false }));
   }
 
+  // whenever user clicks something to upload.
   onImageChange(e) {
     const files = Array.from(e.target.files);
     this.setState({ isLoading: true });
@@ -100,51 +61,61 @@ export default class Profile extends Component {
     let reader = new FileReader();
     reader.onloadend = function() {
       // console.log(reader.result);
-      writeFile(files[0].name, reader.result, { encrypt: false })
+      writeFile(files[0].name, reader.result, {
+        encrypt: false
+      })
         .then(this.fetchData())
         .finally(() => this.setState({ isLoading: false }));
     }.bind(this);
     reader.readAsDataURL(files[0]);
   }
 
+  // downloads the given filename from user's gaia hub
   downloadFile(filename) {
     // download file
-    readFile(filename, { decrypt: false }).then(res => {
+    readFile(filename, { decrypt: true }).then(res => {
       this.setState({ currentImage: res });
     });
   }
 
   onDoctorView() {
-    // this.state.secretPhrase; this.state.username
+    console.log(this.state.secretPhrase, this.state.username)
 
-    console.log(
-      `DoctorView: this.state.secretPhrase, ${
-        this.state.secretPhrase
-      }, this.state.username, ${this.state.username}`
-    );
+    getFile("newtest.txt", {
+      username: "sl_muedie.id.blockstack",
+      decrypt: true
+    }).then(res => {
+      console.log(res);
+      this.setState({ currentImage: res });
+    });
+    // console.log(
+    //   `DoctorView: this.state.secretPhrase, ${
+    //     this.state.secretPhrase
+    //   }, this.state.username, ${this.state.username}`
+    // );
 
-    // let client2 = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message"
+    // // let client2 = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message"
 
-    let url =
-      "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
+    // let url =
+    //   "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
 
-    if (this.state.patientUsername.startsWith("sl_")) {
-      url =
-        "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
-    }
+    // if (this.state.patientUsername.startsWith("sl_")) {
+    //   url =
+    //     "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
+    // }
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        encrypted: this.state.secretPhrase,
-        doctor: this.state.username.split(".")[0]
-      })
-    })
-      .then(msg => msg.json())
-      .then(data => this.setState({ currentImage: data.result }));
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     encrypted: this.state.secretPhrase,
+    //     doctor: this.state.username.split(".")[0]
+    //   })
+    // })
+    //   .then(msg => msg.json())
+    //   .then(data => this.setState({ currentImage: data.result }));
   }
 
   onShare(filename) {
@@ -153,26 +124,26 @@ export default class Profile extends Component {
 
     console.log(filename, this.state.doctorName);
 
-    let url =
-      "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
+    // let url =
+    //   "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message";
 
-    if (this.state.username.startsWith("sl_")) {
-      url =
-        "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
-    }
+    // if (this.state.username.startsWith("sl_")) {
+    //   url =
+    //     "https://us-central1-dhcs-236902.cloudfunctions.net/encrypt_message";
+    // }
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        file: filename,
-        doctor: this.state.doctorName
-      })
-    })
-      .then(msg => msg.json())
-      .then(data => this.setState({ shareResult: data.result }));
+    // fetch(url, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify({
+    //     file: filename,
+    //     doctor: this.state.doctorName
+    //   })
+    // })
+    //   .then(msg => msg.json())
+    //   .then(data => this.setState({ shareResult: data.result }));
   }
 
   render() {
@@ -193,7 +164,7 @@ export default class Profile extends Component {
           <h1>
             Hello,{" "}
             <span id="heading-name">
-              {this.state.username.split(".")[0] || "Dude"}
+              {this.state.username.split(".")[0] || "User"}
             </span>
             !
           </h1>
@@ -218,66 +189,59 @@ export default class Profile extends Component {
                 </textarea>
               ))}
           </div>
-          {!this.state.username.startsWith("dr") && (
-            <div className="image-doctor">
-              <input
-                type="file"
-                onChange={this.onImageChange}
-                className="btn btn-primary btn-lg"
-              />
-              <input
-                type="text"
-                placeholder="Doctor's Name"
-                onChange={e => this.setState({ doctorName: e.target.value })}
-              />
-            </div>
-          )}
+          <div className="image-doctor">
+            <input
+              type="file"
+              onChange={this.onImageChange}
+              className="btn btn-primary btn-lg"
+            />
+            <input
+              type="text"
+              placeholder="Doctor's Name"
+              onChange={e => this.setState({ doctorName: e.target.value })}
+            />
+          </div>
         </div>
         <div className="new-status">
           {this.state.shareResult && <p>{this.state.shareResult}</p>}
           <div className="col-md-12 statuses">
             {this.state.isLoading && <span>Loading...</span>}
-            {!this.state.username.startsWith("dr") &&
-              this.state.statuses.map(status => (
-                <div className="status" key={status.id}>
-                  <p style={{ marginLeft: 5 }}>{status}</p>
-                  <button
-                    className="btn btn-primary btn-lg"
-                    onClick={() => this.downloadFile(status)}
-                  >
-                    View
-                  </button>
-                  <button
-                    className="btn btn-primary btn-lg"
-                    onClick={() => this.onShare(status)}
-                  >
-                    Share
-                  </button>
-                </div>
-              ))}
+            {this.state.files.map(filename => (
+              <div className="status" key={filename.id}>
+                <p style={{ marginLeft: 5 }}>{filename}</p>
+                <button
+                  className="btn btn-primary btn-lg"
+                  onClick={() => this.downloadFile(filename)}
+                >
+                  View
+                </button>
+                <button
+                  className="btn btn-primary btn-lg"
+                  onClick={() => this.onShare(filename)}
+                >
+                  Share
+                </button>
+              </div>
+            ))}
           </div>
-          {this.state.username.startsWith("dr") && (
-            <div className="doctor-view">
-              <input
-                type="text"
-                placeholder="File Secret Phrase"
-                onChange={e => this.setState({ secretPhrase: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Patient's Username"
-                onChange={e =>
-                  this.setState({ patientUsername: e.target.value })
-                }
-              />
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={this.onDoctorView}
-              >
-                View Patient File
-              </button>    
-            </div>
-          )}
+          <div className="doctor-view">
+            <input
+              type="text"
+              placeholder="File Secret Phrase"
+              onChange={e => this.setState({ secretPhrase: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Patient's Username"
+              onChange={e => this.setState({ patientUsername: e.target.value })}
+            />
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={this.onDoctorView}
+            >
+              View Patient File
+            </button>
+          </div>
           <div className="col-md-12" />
         </div>
       </div>
@@ -289,6 +253,7 @@ export default class Profile extends Component {
   }
 
   componentWillMount() {
+    console.log("LOAD", loadUserData());
     this.setState({
       person: new Person(loadUserData().profile),
       username: loadUserData().username
