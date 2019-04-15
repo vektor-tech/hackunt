@@ -7,7 +7,7 @@ import {
   getFile,
   listFiles
 } from "blockstack";
-import * as cryptico from "cryptico"
+import * as cryptico from "cryptico";
 import { putFile } from "blockstack/lib/storage";
 
 const avatarFallbackImage =
@@ -30,10 +30,8 @@ export default class Profile extends Component {
         }
       },
       username: "",
-      statuses: [],
       isLoading: false,
-      shareResult: "",
-      secretPhrase: "",
+      patientFilename: "",
       patientUsername: ""
     };
 
@@ -66,7 +64,7 @@ export default class Profile extends Component {
     let found = 0;
 
     for (let file of this.state.files) {
-      if (file == 'public.json' || file == 'private.json') found++;
+      if (file == "public.json" || file == "private.json") found++;
     }
 
     // if not found generate public & private
@@ -79,10 +77,13 @@ export default class Profile extends Component {
 
       let publickey = cryptico.publicKeyString(privatekey);
 
-      putFile("private.json", JSON.stringify(privatekey), { encrypt: true }).then(res => console.log(res)).catch(err => console.error(err))
-    
-      putFile("public.json", publickey, { encrypt: false }).then(res => console.log(res)).catch(err => console.error(err))
+      putFile("private.json", JSON.stringify(privatekey), { encrypt: true })
+        .then(res => console.log(res))
+        .catch(err => console.error(err));
 
+      putFile("public.json", publickey, { encrypt: false })
+        .then(res => console.log(res))
+        .catch(err => console.error(err));
     }
   }
 
@@ -112,43 +113,37 @@ export default class Profile extends Component {
   }
 
   onDoctorView() {
-    console.log(this.state.secretPhrase, this.state.username);
+    console.log(this.state.patientFilename, this.state.username);
 
-    getFile("public.json", {
-      username: "sl_muedie.id.blockstack",
-      decrypt: false
-    }).then(res => {
-      console.log(res);
-      this.setState({ currentImage: res });
+    // getFile("private.json", {
+    //   decrypt: true
+    // }).then(privatekey => {
+
+    let passphrase = loadUserData().appPrivateKey;
+
+    let privatekey = cryptico.generateRSAKey(passphrase, 1024);
+
+    console.log("PRIVATE", privatekey);
+
+    // console.log(this.state.username)
+    getFile(
+      `${this.state.username.split(".")[0]}_${this.state.patientFilename}`,
+      {
+        username: `${this.state.patientUsername}.id.blockstack`,
+        decrypt: false
+      }
+    ).then(filecontent => {
+      console.log("FILE CONTENT", filecontent);
+
+      // console.log("PARSED KEY", JSON.parse(privatekey));
+
+      let decrypted = cryptico.decrypt(filecontent, privatekey);
+
+      console.log("DECRYPED", decrypted.plaintext);
+
+      this.setState({ currentImage: decrypted.plaintext });
     });
-    // console.log(
-    //   `DoctorView: this.state.secretPhrase, ${
-    //     this.state.secretPhrase
-    //   }, this.state.username, ${this.state.username}`
-    // );
-
-    // // let client2 = "https://us-central1-dhcs2-236915.cloudfunctions.net/encrypt_message"
-
-    // let url =
-    //   "https://us-central1-dhcs2-236915.cloudfunctions.net/decrypt_message";
-
-    // if (this.state.patientUsername.startsWith("sl_")) {
-    //   url =
-    //     "https://us-central1-dhcs-236902.cloudfunctions.net/decrypt_message";
-    // }
-
-    // fetch(url, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     encrypted: this.state.secretPhrase,
-    //     doctor: this.state.username.split(".")[0]
-    //   })
-    // })
-    //   .then(msg => msg.json())
-    //   .then(data => this.setState({ currentImage: data.result }));
+    // });
   }
 
   onShare(filename) {
@@ -159,15 +154,28 @@ export default class Profile extends Component {
     getFile("public.json", {
       username: `${this.state.doctorName}.id.blockstack`,
       decrypt: false
-    }).then(rcvrpublickey => {
-      console.log("PUBLIC", rcvrpublickey);
+    })
+      .then(rcvrpublickey => {
+        console.log("PUBLIC", rcvrpublickey);
 
-      readFile(filename, { decrypt: true }).then(filecontent => {
-        this.setState({ currentImage: res });
-      });
+        console.log("FILENAME TO SHARE", filename);
 
-    });
+        getFile(filename, { decrypt: true })
+          .then(filecontent => {
+            console.log("FILE CO", filecontent);
 
+            let encrypted = cryptico.encrypt(filecontent, rcvrpublickey);
+
+            putFile(`${this.state.doctorName}_${filename}`, encrypted.cipher, {
+              encrypt: false
+            })
+              .then(res => console.log("SHARE DONE", res))
+              .catch(err => console.error(err));
+          })
+          .catch(err => console.error("CALLBACK HELL", err));
+      })
+      .then(res => console.log("CATEDTDETDE", res))
+      .catch(err => console.error(err));
   }
 
   render() {
@@ -209,7 +217,7 @@ export default class Profile extends Component {
                 <textarea
                   style={{ height: "100%", width: "100%", marginLeft: 15 }}
                 >
-                  {this.state.currentImage}
+                  {atob(this.state.currentImage.split('base64,')[1])}
                 </textarea>
               ))}
           </div>
@@ -227,7 +235,6 @@ export default class Profile extends Component {
           </div>
         </div>
         <div className="new-status">
-          {this.state.shareResult && <p>{this.state.shareResult}</p>}
           <div className="col-md-12 statuses">
             {this.state.isLoading && <span>Loading...</span>}
             {this.state.files.map(filename => (
@@ -251,8 +258,8 @@ export default class Profile extends Component {
           <div className="doctor-view">
             <input
               type="text"
-              placeholder="File Secret Phrase"
-              onChange={e => this.setState({ secretPhrase: e.target.value })}
+              placeholder="Patient Filename"
+              onChange={e => this.setState({ patientFilename: e.target.value })}
             />
             <input
               type="text"
