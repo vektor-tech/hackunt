@@ -53,38 +53,28 @@ export default class Profile extends Component {
       .catch(err => console.error(err))
       .finally(() => {
         this.setState({ isLoading: false });
-        // checks if public & private files exists for the user
+        // checks if public.json exists for the user
         this.initialSetup();
       });
   }
 
   initialSetup() {
-    // check for public & private
-
-    let found = 0;
-
+    // check for public.json
     for (let file of this.state.files) {
-      if (file == "public.json" || file == "private.json") found++;
+      if (file == "public.json") return;
     }
 
-    // if not found generate public & private
-    if (found != 2) {
-      // now use RSA
+    // if not found generate public.json
 
-      let passphrase = loadUserData().appPrivateKey;
+    // generate RSA pair
+    let passphrase = loadUserData().appPrivateKey;
+    let privatekey = cryptico.generateRSAKey(passphrase, 1024);
+    let publickey = cryptico.publicKeyString(privatekey);
 
-      let privatekey = cryptico.generateRSAKey(passphrase, 1024);
-
-      let publickey = cryptico.publicKeyString(privatekey);
-
-      putFile("private.json", JSON.stringify(privatekey), { encrypt: true })
-        .then(res => console.log(res))
-        .catch(err => console.error(err));
-
-      putFile("public.json", publickey, { encrypt: false })
-        .then(res => console.log(res))
-        .catch(err => console.error(err));
-    }
+    // store in gaia hub, encrypt false so others can access it.
+    putFile("public.json", publickey, { encrypt: false })
+      .then(res => console.log(res))
+      .catch(err => console.error(err));
   }
 
   // whenever user clicks something to upload.
@@ -112,20 +102,22 @@ export default class Profile extends Component {
     });
   }
 
+  // when View Patient's file is clicked
   onDoctorView() {
-    console.log(this.state.patientFilename, this.state.username);
+    if (
+      !this.state.username ||
+      !this.state.patientFilename ||
+      !this.state.patientUsername
+    ) {
+      console.error("Needed fields not provided!");
+      return;
+    }
 
-    // getFile("private.json", {
-    //   decrypt: true
-    // }).then(privatekey => {
-
+    // generate private key to decrypt
     let passphrase = loadUserData().appPrivateKey;
-
     let privatekey = cryptico.generateRSAKey(passphrase, 1024);
 
-    console.log("PRIVATE", privatekey);
-
-    // console.log(this.state.username)
+    // get file from patient's gaia hub
     getFile(
       `${this.state.username.split(".")[0]}_${this.state.patientFilename}`,
       {
@@ -133,49 +125,43 @@ export default class Profile extends Component {
         decrypt: false
       }
     ).then(filecontent => {
-      console.log("FILE CONTENT", filecontent);
-
-      // console.log("PARSED KEY", JSON.parse(privatekey));
-
+      // decrypts encrypted file content
       let decrypted = cryptico.decrypt(filecontent, privatekey);
-
-      console.log("DECRYPED", decrypted.plaintext);
 
       this.setState({ currentImage: decrypted.plaintext });
     });
-    // });
   }
 
+  // to share a file with doctor
   onShare(filename) {
     if (!filename || !this.state.doctorName) return;
 
-    console.log(filename, this.state.doctorName);
-
+    // get's public.json from doctor gaia hub
     getFile("public.json", {
       username: `${this.state.doctorName}.id.blockstack`,
       decrypt: false
     })
       .then(rcvrpublickey => {
-        console.log("PUBLIC", rcvrpublickey);
-
-        console.log("FILENAME TO SHARE", filename);
-
+        // get file to share
         getFile(filename, { decrypt: true })
           .then(filecontent => {
-            console.log("FILE CO", filecontent);
-
+            // here we have public key and file content to encrypt
             let encrypted = cryptico.encrypt(filecontent, rcvrpublickey);
 
+            // make a copy that can be decrypted by doctor
             putFile(`${this.state.doctorName}_${filename}`, encrypted.cipher, {
               encrypt: false
             })
-              .then(res => console.log("SHARE DONE", res))
-              .catch(err => console.error(err));
+              .then(res => console.log("SHARE DONE: ", res))
+              .catch(err =>
+                console.error("Error on storing doctor's file", err)
+              );
           })
-          .catch(err => console.error("CALLBACK HELL", err));
+          .catch(err => console.error("Error on getting file to share: ", err));
       })
-      .then(res => console.log("CATEDTDETDE", res))
-      .catch(err => console.error(err));
+      .catch(err =>
+        console.error("Error on getting doctor's public.json", err)
+      );
   }
 
   render() {
@@ -217,7 +203,7 @@ export default class Profile extends Component {
                 <textarea
                   style={{ height: "100%", width: "100%", marginLeft: 15 }}
                 >
-                  {atob(this.state.currentImage.split('base64,')[1])}
+                  {atob(this.state.currentImage.split("base64,")[1])}
                 </textarea>
               ))}
           </div>
@@ -284,7 +270,6 @@ export default class Profile extends Component {
   }
 
   componentWillMount() {
-    console.log("LOAD", loadUserData());
     this.setState({
       person: new Person(loadUserData().profile),
       username: loadUserData().username
