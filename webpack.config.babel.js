@@ -5,6 +5,7 @@ const webpack = require('webpack');
 // this will allow for the authRequest to see the file at www.example.com/manifest.json
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ManifestAssetPlugin = new CopyWebpackPlugin([ { from: 'src/assets/manifest.json', to: 'manifest.json' } ]);
+const HeadersAssetPlugin = new CopyWebpackPlugin([ { from: './_headers', to: '.' } ]);
 const IconAssetPlugin = new CopyWebpackPlugin([ { from: 'src/images/icon-192x192.png', to: 'icon-192x192.png' } ]);
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -32,7 +33,6 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.json$/, use: 'json-loader' },
       { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ },
       {
@@ -42,5 +42,5 @@ module.exports = {
       { test: /\.css$/, loader: 'style-loader!css-loader' }
     ]
   },
-  plugins: [HtmlWebpackPluginConfig, ManifestAssetPlugin, IconAssetPlugin]
+  plugins: [HtmlWebpackPluginConfig, ManifestAssetPlugin, IconAssetPlugin, HeadersAssetPlugin]
 }
