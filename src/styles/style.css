@@ -1,77 +1,80 @@
-/* Globals */
-a,a:focus,a:hover{color:#fff;}
-html,body{height:100%;text-align:center;background-color:#191b22;}
-body{color:#fff}
-.hide{display:none;}
-.landing-heading{font-family:'Lato',Sans-Serif;font-weight:400;}
-
-/* Buttons */
-.btn{font-family:'Lato',Sans-Serif;padding:0.5625rem 2.5rem;font-size:0.8125rem;font-weight:400;line-height:1.75rem;border-radius:0!important;-webkit-transition:all .2s ease-in-out;-moz-transition:all .2s ease-in-out;-ms-transition:all .2s ease-in-out;-o-transition:all .2s ease-in-out;transition:all .2s ease-in-out;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;margin-left: 5px;}
-.btn-lg{font-size:1.5rem;padding:0.6875rem 3.4375rem;line-height:2.5rem;}
-.btn:focus,.btn:active:focus,.btn.active:focus{outline:none;}
-.btn-primary{color:#fff;border:1px solid #2C96FF;background-color:#2C96FF;}
-.btn-primary:hover,.btn-primary:focus,.btn-primary:active{color:#fff;border:1px solid #1a6ec0;background-color:#1a6ec0;}
-
-/* Avatar */
-.avatar{width:100px;height:100px;}
-/* .avatar-section{margin-bottom:25px;display:flex;text-align:right;} */
-/* .username{margin-left:20px;} */
-
-/* Scaffolding */
-.site-wrapper{display:table;width:100%;height:100vh;min-height:100%;}
-.site-wrapper-inner{display:flex;flex-direction:column;justify-content:center;margin-right:auto;margin-left:auto;width:100%;height:100vh;}
-.panel-authed{padding:0 0 0 0;}
-
-/* Home button */
-.btn-home-hello{position:absolute;font-family:'Source Code Pro',monospace;font-size:11px;font-weight:400;color:rgba(255,255,255,0.85);top:15px;left:15px;padding:3px 20px;background-color:rgba(255,255,255,0.15);border-radius:6px;-webkit-box-shadow:0px 0px 20px 0px rgba(0,0,0,0.15);-moz-box-shadow:0px 0px 20px 0px rgba(0,0,0,0.15);box-shadow:0px 0px 20px 0px rgba(0,0,0,0.15);}
-
-/* Input */
-input, textarea{color:#000;padding:10px;}
-.input-status{width:100%;height:70px;border-radius:6px;}
-.new-status{text-align:right;}
-
-/* Statuses */
-.statuses{
-    padding-top:10px;
-    margin-right: 25px;
-}
-/* .status{margin:15px 0px;padding:10px;background-color:#2e2e2e;border-radius:6px} */
-.status {
-    text-align: center;
-    margin: 15px 0px;
-    /* background-color:#2e2e2e; */
-    border-radius:6px;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    /* margin-right: 10px; */
+.tr {
+  background: transparent;
 }
 
-/* seperate 2 sides */
-.left {
-    width: 50%;
-    align-items: center;
+.brand {
+  font-size: 28px;
+  font-weight: 500;
+}
+.navheader {
+  font-size: 20px;
 }
 
-.new-status {
-    width: 50%;
-    align-items: center;
+.logo {
+  height: 45px;
+  margin-right: 10%;
 }
 
-.panel-welcome {
-    display: flex;
-    flex-direction: row;
-    width: 90%;
+.background1 {
+  background-image: radial-gradient(white, #00adb4);
+}
+/* .background2 {
+  background-image: url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png"), url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png"), url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png");
+  background-size: 6%, 5%, 5%, 6%, 5%, 4%;
+  background-position: 90% 40%, 92% 80%, 9% 60%, 8% 30%, 90% 5%, 47% 98%;
+  background-repeat: no-repeat;
+} */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding-top: 5%;
 }
 
-.image-doctor {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin-top: 20px;
+.icon {
+  text-align: center;
 }
 
-.result-div {
-    /* max-width: 50vw;
-    max-height: 50vh; */
+.carousel {
+  min-width: 50vw;
+  margin: 0 auto;
+}
+
+.carousel p {
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 18px;
+}
+
+.circle {
+  border-radius: 50%;
+  width: 80%;
+  height: 15em;
+  margin: 10px auto;
+}
+
+.cpy {
+  margin-left: 15%;
+}
+
+.icn {
+  width: 50px;
+  height: 50px;
+}
+
+.icn:hover {
+  opacity: 0.8;
+}
+
+.icn-github {
+  color: #211f1f;
+}
+
+.icn-linkedin {
+  background-color: #0077b5;
 }

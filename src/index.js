@@ -1,10 +1,11 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
 
-import App from './components/App.jsx';
+import App from "./components/App.jsx";
 
 // Require Sass file so webpack can build it
-import bootstrap from 'bootstrap/dist/css/bootstrap.css';
-import style from './styles/style.css';
+import bootstrap from "bootstrap/dist/css/bootstrap.css";
+import style from "./styles/style.css";
+import "bootstrap";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
