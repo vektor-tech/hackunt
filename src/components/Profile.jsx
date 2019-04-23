@@ -168,51 +168,34 @@ export default class Profile extends Component {
     const { handleSignOut } = this.props;
     const { person } = this.state;
     return !isSignInPending() ? (
-      <div className="panel-welcome" id="section-2">
-        <div className="left">
-          <div className="avatar-section">
+      <div>
+        <div>
+          <div>
             <img
               src={
                 person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage
               }
-              className="img-rounded avatar"
-              id="avatar-image"
             />
           </div>
           <h1>
-            Hello,{" "}
-            <span id="heading-name">
-              {this.state.username.split(".")[0] || "User"}
-            </span>
-            !
+            Hello, <span>{this.state.username.split(".")[0] || "User"}</span>!
           </h1>
-          <p className="lead">
-            <button
-              className="btn btn-primary btn-lg"
-              id="signout-button"
-              onClick={handleSignOut.bind(this)}
-            >
-              Logout
-            </button>
+          <p>
+            <button onClick={handleSignOut.bind(this)}>Logout</button>
           </p>
-          <div className="result-div">
+          <div>
             {this.state.currentImage &&
               (this.state.currentImage.startsWith("data:image") ? (
                 <img style={{ height: "30vh" }} src={this.state.currentImage} />
               ) : (
                 <textarea
                   style={{ height: "100%", width: "100%", marginLeft: 15 }}
-                >
-                  {atob(this.state.currentImage.split("base64,")[1])}
-                </textarea>
+                  value={atob(this.state.currentImage.split("base64,")[1])}
+                />
               ))}
           </div>
-          <div className="image-doctor">
-            <input
-              type="file"
-              onChange={this.onImageChange}
-              className="btn btn-primary btn-lg"
-            />
+          <div>
+            <input type="file" onChange={this.onImageChange} />
             <input
               type="text"
               placeholder="Doctor's Name"
@@ -220,28 +203,20 @@ export default class Profile extends Component {
             />
           </div>
         </div>
-        <div className="new-status">
-          <div className="col-md-12 statuses">
+        <div>
+          <div>
             {this.state.isLoading && <span>Loading...</span>}
             {this.state.files.map(filename => (
-              <div className="status" key={filename.id}>
+              <div key={filename.id}>
                 <p style={{ marginLeft: 5 }}>{filename}</p>
-                <button
-                  className="btn btn-primary btn-lg"
-                  onClick={() => this.downloadFile(filename)}
-                >
+                <button onClick={() => this.downloadFile(filename)}>
                   View
                 </button>
-                <button
-                  className="btn btn-primary btn-lg"
-                  onClick={() => this.onShare(filename)}
-                >
-                  Share
-                </button>
+                <button onClick={() => this.onShare(filename)}>Share</button>
               </div>
             ))}
           </div>
-          <div className="doctor-view">
+          <div>
             <input
               type="text"
               placeholder="Patient Filename"
@@ -252,14 +227,9 @@ export default class Profile extends Component {
               placeholder="Patient's Username"
               onChange={e => this.setState({ patientUsername: e.target.value })}
             />
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={this.onDoctorView}
-            >
-              View Patient File
-            </button>
+            <button onClick={this.onDoctorView}>View Patient File</button>
           </div>
-          <div className="col-md-12" />
+          <div />
         </div>
       </div>
     ) : null;

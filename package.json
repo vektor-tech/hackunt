@@ -37,6 +37,7 @@
     "webpack-dev-server": "^3.3.1"
   },
   "dependencies": {
+    "@material-ui/core": "^3.9.3",
     "blockstack": "^19.1.0",
     "blockstack-large-storage": "^0.0.6",
     "bootstrap": "^4.3.1",

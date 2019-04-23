@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { isUserSignedIn } from 'blockstack';
+import React, { Component } from "react";
 
 export default class Signin extends Component {
   constructor(props) {
@@ -10,14 +9,10 @@ export default class Signin extends Component {
     const { handleSignIn } = this.props;
 
     return (
-      <div className="panel-landing" id="section-1">
-        <h1 className="landing-heading">Welcome to Decentralized Health Care System!</h1>
-        <p className="lead">
-          <button
-            className="btn btn-primary btn-lg"
-            id="signin-button"
-            onClick={ handleSignIn.bind(this) }
-          >
+      <div>
+        <h1>Welcome to Decentralized Health Care System!</h1>
+        <p>
+          <button onClick={handleSignIn.bind(this)}>
             Sign In with Blockstack
           </button>
         </p>
