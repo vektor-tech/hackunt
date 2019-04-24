@@ -21,7 +21,7 @@ export default class Signin extends Component {
         <div className="background1">
           <Navbar bg="light" expand="lg" sticky="top">
             <Navbar.Brand href="#home" className="brand">
-              <img className="logo" src="../../public/build/logo.png" />
+              <img className="logo" src="./logo.png" />
               DHCS
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -52,7 +52,7 @@ export default class Signin extends Component {
               </Jumbotron>
 
               <Jumbotron className="col-5 tr align-self-center">
-                <img src="../../public/build/test.jpg" width="100%" />
+                <img src="./test.jpg" width="100%" />
               </Jumbotron>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="../../public/build/test.jpg"
+                  src="./test.jpg"
                   alt="First slide"
                 />
                 <Carousel.Caption>
@@ -72,7 +72,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="../../public/build/test.jpg"
+                  src="./test.jpg"
                   alt="Third slide"
                 />
 
@@ -83,7 +83,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="../../public/build/test.jpg"
+                  src="./test.jpg"
                   alt="Third slide"
                 />
 
@@ -99,11 +99,7 @@ export default class Signin extends Component {
             <div className="row justify-content-center">
               <Jumbotron className="col-4 tr align-self-center">
                 <Card className="border-0 tr">
-                  <Card.Img
-                    variant="top"
-                    className="circle"
-                    src="../../public/build/rs.jpg"
-                  />
+                  <Card.Img variant="top" className="circle" src="./rs.jpg" />
                   <Card.Body>
                     <Card.Title>Roshan Shrestha</Card.Title>
                     <Card.Text>
@@ -117,17 +113,14 @@ export default class Signin extends Component {
                         href="https://www.linkedin.com/in/xroshan/"
                         target="_blank"
                       >
-                        <img
-                          className="icn"
-                          src="../../public/build/link.png"
-                        />
+                        <img className="icn" src="./link.png" />
                       </a>
                       <a
                         className="btn"
                         href="https://github.com/xroshan"
                         target="_blank"
                       >
-                        <img className="icn" src="../../public/build/git.png" />
+                        <img className="icn" src="./git.png" />
                       </a>
                     </div>
                   </Card.Body>
@@ -136,11 +129,7 @@ export default class Signin extends Component {
 
               <Jumbotron className="col-4 tr align-self-center">
                 <Card className="border-0 tr">
-                  <Card.Img
-                    variant="top"
-                    className="circle"
-                    src="../../public/build/sl.jpg"
-                  />
+                  <Card.Img variant="top" className="circle" src="./sl.jpg" />
                   <Card.Body>
                     <Card.Title>Safal Lamsal</Card.Title>
                     <Card.Text>
@@ -154,17 +143,14 @@ export default class Signin extends Component {
                         href="https://www.linkedin.com/in/safal-lamsal/"
                         target="_blank"
                       >
-                        <img
-                          className="icn"
-                          src="../../public/build/link.png"
-                        />
+                        <img className="icn" src="./link.png" />
                       </a>
                       <a
                         className="btn"
                         href="https://github.com/muedie"
                         target="_blank"
                       >
-                        <img className="icn" src="../../public/build/git.png" />
+                        <img className="icn" src="./git.png" />
                       </a>
                     </div>
                   </Card.Body>

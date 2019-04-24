@@ -53,20 +53,7 @@ module.exports = {
         test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
         loader: "file-loader!url-loader"
       },
-      { test: /\.css$/, loader: "style-loader!css-loader" },
-      {
-        test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[name].[ext]",
-              outputPath: "fonts/", // where the fonts will go
-              publicPath: "../public/build" // override the default path
-            }
-          }
-        ]
-      }
+      { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
   },
   plugins: [
