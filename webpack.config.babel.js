@@ -16,7 +16,9 @@ const IconAssetPlugin = new CopyWebpackPlugin([
   { from: "src/images/logo1.png", to: "logo1.png" },
   { from: "src/images/test.jpg", to: "test.jpg" },
   { from: "src/images/git.png", to: "git.png" },
-  { from: "src/images/link.png", to: "link.png" }
+  { from: "src/images/link.png", to: "link.png" },
+  { from: "src/images/rs.jpg", to: "rs.jpg" },
+  { from: "src/images/sl.jpg", to: "sl.jpg" }
 ]);
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");

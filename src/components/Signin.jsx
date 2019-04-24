@@ -102,18 +102,20 @@ export default class Signin extends Component {
                   <Card.Img
                     variant="top"
                     className="circle"
-                    src="../../public/build/test.jpg"
+                    src="../../public/build/rs.jpg"
                   />
                   <Card.Body>
                     <Card.Title>Roshan Shrestha</Card.Title>
                     <Card.Text>
-                      Some quick example text to build on the card title and
-                      make up the bulk of the card's content.
+                      DHCS is our first decentralized app. I hope this inspires
+                      the developer community to focus more on user's privacy
+                      and build decentralized server application.
                     </Card.Text>
                     <div className="icon">
                       <a
                         className="btn"
                         href="https://www.linkedin.com/in/xroshan/"
+                        target="_blank"
                       >
                         <img
                           className="icn"
@@ -121,8 +123,9 @@ export default class Signin extends Component {
                         />
                       </a>
                       <a
-                        className="btn fab fa-github fa-3x"
+                        className="btn"
                         href="https://github.com/xroshan"
+                        target="_blank"
                       >
                         <img className="icn" src="../../public/build/git.png" />
                       </a>
@@ -136,26 +139,31 @@ export default class Signin extends Component {
                   <Card.Img
                     variant="top"
                     className="circle"
-                    src="../../public/build/test.jpg"
+                    src="../../public/build/sl.jpg"
                   />
                   <Card.Body>
                     <Card.Title>Safal Lamsal</Card.Title>
                     <Card.Text>
-                      Some quick example text to build on the card title and
-                      make up the bulk of the card's content.
+                      This application gives users right to their data. At the
+                      same time, it is their reponsibility to keep it safe and
+                      secure by learning the decentralization technology.
                     </Card.Text>
                     <div className="icon">
                       <a
                         className="btn"
                         href="https://www.linkedin.com/in/safal-lamsal/"
+                        target="_blank"
                       >
                         <img
                           className="icn"
                           src="../../public/build/link.png"
                         />
                       </a>
-                      <a className="btn" href="https://github.com/muedie">
-                        {" "}
+                      <a
+                        className="btn"
+                        href="https://github.com/muedie"
+                        target="_blank"
+                      >
                         <img className="icn" src="../../public/build/git.png" />
                       </a>
                     </div>
