@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import MainAppBar from "./MainAppBar.jsx";
 import { writeFile, readFile } from "blockstack-large-storage";
 import {
   isSignInPending,
@@ -169,20 +170,11 @@ export default class Profile extends Component {
     const { person } = this.state;
     return !isSignInPending() ? (
       <div>
+        <MainAppBar
+          onLogout={handleSignOut}
+          username={this.state.username.split(".")[0] || "User"}
+        />
         <div>
-          <div>
-            <img
-              src={
-                person.avatarUrl() ? person.avatarUrl() : avatarFallbackImage
-              }
-            />
-          </div>
-          <h1>
-            Hello, <span>{this.state.username.split(".")[0] || "User"}</span>!
-          </h1>
-          <p>
-            <button onClick={handleSignOut.bind(this)}>Logout</button>
-          </p>
           <div>
             {this.state.currentImage &&
               (this.state.currentImage.startsWith("data:image") ? (

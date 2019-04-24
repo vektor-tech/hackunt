@@ -1,4 +1,7 @@
-import React, { Component, Link } from "react";
+import React, { Component } from "react";
+import { CssBaseline } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
 import Profile from "./Profile.jsx";
 import Signin from "./Signin.jsx";
 import {
@@ -8,6 +11,8 @@ import {
   handlePendingSignIn,
   signUserOut
 } from "blockstack";
+
+const theme = createMuiTheme({ typography: { useNextVariants: true } });
 
 export default class App extends Component {
   constructor(props) {
@@ -30,13 +35,16 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <React.Fragment>
+        <CssBaseline />
         {!isUserSignedIn() ? (
           <Signin handleSignIn={this.handleSignIn} />
         ) : (
-          <Profile handleSignOut={this.handleSignOut} />
+          <ThemeProvider theme={theme}>
+            <Profile handleSignOut={this.handleSignOut} />
+          </ThemeProvider>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 
