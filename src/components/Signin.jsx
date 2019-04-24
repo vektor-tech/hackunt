@@ -52,7 +52,7 @@ export default class Signin extends Component {
               </Jumbotron>
 
               <Jumbotron className="col-5 tr align-self-center">
-                <img src="./test.jpg" width="100%" />
+                <img src="./home.jpg" width="100%" />
               </Jumbotron>
             </div>
           </div>
@@ -62,7 +62,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="./test.jpg"
+                  src="./carousel1.jpg"
                   alt="First slide"
                 />
                 <Carousel.Caption>
@@ -72,7 +72,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="./test.jpg"
+                  src="./carousel2.jpg"
                   alt="Third slide"
                 />
 
@@ -83,7 +83,7 @@ export default class Signin extends Component {
               <Carousel.Item>
                 <img
                   className="d-block w-100"
-                  src="./test.jpg"
+                  src="./carousel3.jpg"
                   alt="Third slide"
                 />
 
