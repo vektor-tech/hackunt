@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { CircularProgress } from "@material-ui/core";
 import MainAppBar from "./MainAppBar.jsx";
 import { writeFile, readFile } from "blockstack-large-storage";
 import {
@@ -10,6 +11,7 @@ import {
 } from "blockstack";
 import * as cryptico from "cryptico";
 import { putFile } from "blockstack/lib/storage";
+import FileTable from "./FileTable.jsx";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -46,7 +48,7 @@ export default class Profile extends Component {
 
     listFiles(name => {
       this.setState({
-        files: [name, ...this.state.files]
+        files: [{ id: this.state.files.length + 1 , name}, ...this.state.files]
       });
       return true;
     })
@@ -167,13 +169,21 @@ export default class Profile extends Component {
 
   render() {
     const { handleSignOut } = this.props;
-    const { person } = this.state;
     return !isSignInPending() ? (
       <div>
         <MainAppBar
           onLogout={handleSignOut}
           username={this.state.username.split(".")[0] || "User"}
         />
+        <div>
+          <input type="file" onChange={this.onImageChange} />
+          <input
+            type="text"
+            placeholder="Doctor's Name"
+            onChange={e => this.setState({ doctorName: e.target.value })}
+          />
+        </div>
+        <FileTable filenames={this.state.files} />
         <div>
           <div>
             {this.state.currentImage &&
@@ -186,19 +196,11 @@ export default class Profile extends Component {
                 />
               ))}
           </div>
-          <div>
-            <input type="file" onChange={this.onImageChange} />
-            <input
-              type="text"
-              placeholder="Doctor's Name"
-              onChange={e => this.setState({ doctorName: e.target.value })}
-            />
-          </div>
         </div>
         <div>
           <div>
             {this.state.isLoading && <span>Loading...</span>}
-            {this.state.files.map(filename => (
+            {/* {this.state.files.map(filename => (
               <div key={filename.id}>
                 <p style={{ marginLeft: 5 }}>{filename}</p>
                 <button onClick={() => this.downloadFile(filename)}>
@@ -206,25 +208,13 @@ export default class Profile extends Component {
                 </button>
                 <button onClick={() => this.onShare(filename)}>Share</button>
               </div>
-            ))}
+            ))} */}
           </div>
-          <div>
-            <input
-              type="text"
-              placeholder="Patient Filename"
-              onChange={e => this.setState({ patientFilename: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Patient's Username"
-              onChange={e => this.setState({ patientUsername: e.target.value })}
-            />
-            <button onClick={this.onDoctorView}>View Patient File</button>
-          </div>
-          <div />
         </div>
       </div>
-    ) : null;
+    ) : (
+      <CircularProgress className={classes.progress} />
+    );
   }
 
   componentDidMount() {
