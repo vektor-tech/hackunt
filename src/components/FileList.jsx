@@ -36,7 +36,7 @@ function FileList(props) {
     <List>
       {filenames.map(({ id, name }) => {
         return (
-          <ListItem key={id} button onClick={() => handlePreview(name)}>
+          <ListItem key={id} button onClick={() => handlePreview(name, shared)}>
             <ListItemAvatar>
               <Avatar>
                 <InsertDriveFile />

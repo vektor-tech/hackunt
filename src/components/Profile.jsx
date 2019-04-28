@@ -147,6 +147,8 @@ class Profile extends Component {
       return;
     }
 
+    this.setState({ filePreviewDialogOpen: true, isLoading: true });
+
     // generate private key to decrypt
     let passphrase = loadUserData().appPrivateKey;
     let privatekey = cryptico.generateRSAKey(passphrase, 1024);
@@ -158,12 +160,17 @@ class Profile extends Component {
         username: `${patientUsername}.id.blockstack`,
         decrypt: false
       }
-    ).then(filecontent => {
-      // decrypts encrypted file content
-      let decrypted = cryptico.decrypt(filecontent, privatekey);
+    )
+      .then(filecontent => {
+        // decrypts encrypted file content
+        let decrypted = cryptico.decrypt(filecontent, privatekey);
 
-      this.setState({ fileContent: decrypted.plaintext });
-    });
+        this.setState({ fileContent: decrypted.plaintext, isLoading: false });
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({ isLoading: false, fileContent: "Error Occured!" });
+      });
   }
 
   // to share a file with doctor
@@ -241,7 +248,8 @@ class Profile extends Component {
     this.setState({ tabValue: value });
   };
 
-  previewOpen = filename => {
+  previewOpen = (filename, shared) => {
+    if (shared) return;
     this.setState({ filePreviewDialogOpen: true });
     this.downloadFile(filename);
   };
