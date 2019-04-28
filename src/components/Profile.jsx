@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import {
   CircularProgress,
   Button,
-  Paper,
-  IconButton,
-  Snackbar
+  Paper
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import CloseIcon from "@material-ui/icons/Close";
 import MainAppBar from "./MainAppBar.jsx";
 import FileList from "./FileList.jsx";
 import { writeFile, readFile } from "blockstack-large-storage";
@@ -21,6 +18,7 @@ import {
 } from "blockstack";
 import * as cryptico from "cryptico";
 import { putFile } from "blockstack/lib/storage";
+import SnackBarMessage from "./SnackBarMessage.jsx";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -37,9 +35,6 @@ const styles = theme => ({
   },
   input: {
     display: "none"
-  },
-  close: {
-    padding: theme.spacing.unit / 2
   }
 });
 
@@ -63,7 +58,7 @@ class Profile extends Component {
       isLoading: false,
       patientFilename: "",
       patientUsername: "",
-      open: false,
+      snackBarOpen: false,
       snackbarMessage: ""
     };
 
@@ -207,12 +202,15 @@ class Profile extends Component {
       return;
     }
 
-    this.setState({ open: false });
+    this.setState({ snackBarOpen: false });
   }
 
-  handleDelete(filename) {
-    console.log(`delete ${filename}`);
-  }
+  handleDelete = filename => {
+    this.setState({
+      snackBarOpen: true,
+      snackbarMessage: "Deleting " + filename
+    });
+  };
 
   handleShare(filename) {
     console.log(`share ${filename}`);
@@ -273,29 +271,10 @@ class Profile extends Component {
                 ))}
             </div>
           </div>
-          <Snackbar
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "center"
-            }}
-            open={this.state.open}
-            autoHideDuration={6000}
-            onClose={this.handleClose}
-            ContentProps={{
-              "aria-describedby": "message-id"
-            }}
-            message={<span id="message-id">{this.state.snackbarMessage}</span>}
-            action={[
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                className={classes.close}
-                onClick={this.handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            ]}
+          <SnackBarMessage
+            message={this.state.snackbarMessage}
+            handleClose={this.handleClose}
+            open={this.state.snackBarOpen}
           />
         </Paper>
       </>
