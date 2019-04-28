@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import {
-  CircularProgress,
-  Button,
-  Paper
-} from "@material-ui/core";
+import { CircularProgress, Button, Paper } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import MainAppBar from "./MainAppBar.jsx";
 import FileList from "./FileList.jsx";
+import SnackBarMessage from "./SnackBarMessage.jsx";
+import ShareDialog from "./ShareDialog.jsx";
 import { writeFile, readFile } from "blockstack-large-storage";
 import {
   isSignInPending,
@@ -18,7 +16,6 @@ import {
 } from "blockstack";
 import * as cryptico from "cryptico";
 import { putFile } from "blockstack/lib/storage";
-import SnackBarMessage from "./SnackBarMessage.jsx";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
@@ -59,7 +56,9 @@ class Profile extends Component {
       patientFilename: "",
       patientUsername: "",
       snackBarOpen: false,
-      snackbarMessage: ""
+      snackbarMessage: "",
+      shareDialogOpen: false,
+      shareFilename: ""
     };
 
     this.onImageChange = this.onImageChange.bind(this);
@@ -166,12 +165,16 @@ class Profile extends Component {
   }
 
   // to share a file with doctor
-  onShare(filename) {
-    if (!filename || !this.state.doctorName) return;
+  onShare = (filename, doctorName) => {
+    this.setState({
+      shareDialogOpen: false
+    });
+
+    if (!filename || !doctorName) return;
 
     // get's public.json from doctor gaia hub
     getFile("public.json", {
-      username: `${this.state.doctorName}.id.blockstack`,
+      username: `${doctorName}.id.blockstack`,
       decrypt: false
     })
       .then(rcvrpublickey => {
@@ -182,10 +185,15 @@ class Profile extends Component {
             let encrypted = cryptico.encrypt(filecontent, rcvrpublickey);
 
             // make a copy that can be decrypted by doctor
-            putFile(`${this.state.doctorName}_${filename}`, encrypted.cipher, {
+            putFile(`${doctorName}_${filename}`, encrypted.cipher, {
               encrypt: false
             })
-              .then(res => console.log("SHARE DONE: ", res))
+              .then(_ =>
+                this.setState({
+                  snackBarOpen: true,
+                  snackbarMessage: `Shared ${filename} with ${doctorName}!`
+                })
+              )
               .catch(err =>
                 console.error("Error on storing doctor's file", err)
               );
@@ -195,7 +203,7 @@ class Profile extends Component {
       .catch(err =>
         console.error("Error on getting doctor's public.json", err)
       );
-  }
+  };
 
   handleClose(event, reason) {
     if (reason === "clickaway") {
@@ -212,9 +220,17 @@ class Profile extends Component {
     });
   };
 
-  handleShare(filename) {
+  handleShare = filename => {
     console.log(`share ${filename}`);
-  }
+    this.setState({
+      shareDialogOpen: true,
+      shareFilename: filename
+    });
+  };
+
+  handleShareDialogClose = () => {
+    this.setState({ shareDialogOpen: false });
+  };
 
   render() {
     const { handleSignOut, classes } = this.props;
@@ -275,6 +291,12 @@ class Profile extends Component {
             message={this.state.snackbarMessage}
             handleClose={this.handleClose}
             open={this.state.snackBarOpen}
+          />
+          <ShareDialog
+            open={this.state.shareDialogOpen}
+            handleClose={this.handleShareDialogClose}
+            filename={this.state.shareFilename}
+            handleSubmit={this.onShare}
           />
         </Paper>
       </>

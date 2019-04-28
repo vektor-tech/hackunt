@@ -18,7 +18,7 @@ function FileList(props) {
   return (
     <List>
       {props.filenames.map(({ id, name }) => (
-        <ListItem key={id}>
+        <ListItem key={id} button>
           <ListItemAvatar>
             <Avatar>
               <InsertDriveFile />
