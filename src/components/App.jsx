@@ -50,7 +50,7 @@ export default class App extends Component {
 
   componentWillMount() {
     if (isSignInPending()) {
-      handlePendingSignIn().then(userData => {
+      handlePendingSignIn().then(_ => {
         window.location = window.location.origin;
       });
     }

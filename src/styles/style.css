@@ -1,0 +1,81 @@
+.tr {
+  background: transparent;
+}
+
+.brand {
+  font-size: 28px;
+  font-weight: 500;
+}
+.navheader {
+  font-size: 20px;
+}
+
+.logo {
+  height: 45px;
+  margin-right: 10%;
+}
+
+.background1 {
+  background-image: radial-gradient(white, #00adb4);
+}
+/* .background2 {
+  background-image: url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png"), url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png"), url("../../public/build/logo1.png"),
+    url("../../public/build/logo1.png");
+  background-size: 6%, 5%, 5%, 6%, 5%, 4%;
+  background-position: 90% 40%, 92% 80%, 9% 60%, 8% 30%, 90% 5%, 47% 98%;
+  background-repeat: no-repeat;
+} */
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding-top: 5%;
+}
+
+.icon {
+  text-align: center;
+}
+
+.carousel {
+  min-width: 50vw;
+  margin: 0 auto;
+}
+
+.carousel p {
+  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 18px;
+}
+
+.circle {
+  border-radius: 50%;
+  width: 80%;
+  height: 15em;
+  margin: 10px auto;
+  object-fit: cover;
+}
+
+.cpy {
+  margin-left: 15%;
+}
+
+.icn {
+  width: 50px;
+  height: 50px;
+}
+
+.icn:hover {
+  opacity: 0.8;
+}
+
+.icn-github {
+  color: #211f1f;
+}
+
+.icn-linkedin {
+  background-color: #0077b5;
+}
