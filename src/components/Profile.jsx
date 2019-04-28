@@ -1,6 +1,16 @@
 import React, { Component } from "react";
-import { CircularProgress } from "@material-ui/core";
+import {
+  CircularProgress,
+  Button,
+  Paper,
+  IconButton,
+  Snackbar
+} from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CloseIcon from "@material-ui/icons/Close";
 import MainAppBar from "./MainAppBar.jsx";
+import FileList from "./FileList.jsx";
 import { writeFile, readFile } from "blockstack-large-storage";
 import {
   isSignInPending,
@@ -11,12 +21,29 @@ import {
 } from "blockstack";
 import * as cryptico from "cryptico";
 import { putFile } from "blockstack/lib/storage";
-import FileTable from "./FileTable.jsx";
 
 const avatarFallbackImage =
   "https://s3.amazonaws.com/onename/avatar-placeholder.png";
 
-export default class Profile extends Component {
+const styles = theme => ({
+  button: {
+    margin: theme.spacing.unit
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit
+  },
+  root: {
+    padding: theme.spacing.unit
+  },
+  input: {
+    display: "none"
+  },
+  close: {
+    padding: theme.spacing.unit / 2
+  }
+});
+
+class Profile extends Component {
   constructor(props) {
     super(props);
 
@@ -35,11 +62,14 @@ export default class Profile extends Component {
       username: "",
       isLoading: false,
       patientFilename: "",
-      patientUsername: ""
+      patientUsername: "",
+      open: false,
+      snackbarMessage: ""
     };
 
     this.onImageChange = this.onImageChange.bind(this);
     this.onDoctorView = this.onDoctorView.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   // gets list of files from user's gaia hub
@@ -48,7 +78,7 @@ export default class Profile extends Component {
 
     listFiles(name => {
       this.setState({
-        files: [{ id: this.state.files.length + 1 , name}, ...this.state.files]
+        files: [{ id: this.state.files.length + 1, name }, ...this.state.files]
       });
       return true;
     })
@@ -87,12 +117,17 @@ export default class Profile extends Component {
 
     let reader = new FileReader();
     reader.onloadend = function() {
-      // console.log(reader.result);
       writeFile(files[0].name, reader.result, {
         encrypt: true
       })
         .then(this.fetchData())
-        .finally(() => this.setState({ isLoading: false }));
+        .finally(() =>
+          this.setState({
+            isLoading: false,
+            open: true,
+            snackbarMessage: "File Uploaded!"
+          })
+        );
     }.bind(this);
     reader.readAsDataURL(files[0]);
   }
@@ -167,51 +202,103 @@ export default class Profile extends Component {
       );
   }
 
+  handleClose(event, reason) {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ open: false });
+  }
+
+  handleDelete(filename) {
+    console.log(`delete ${filename}`);
+  }
+
+  handleShare(filename) {
+    console.log(`share ${filename}`);
+  }
+
   render() {
-    const { handleSignOut } = this.props;
+    const { handleSignOut, classes } = this.props;
     return !isSignInPending() ? (
-      <div>
+      <>
         <MainAppBar
           onLogout={handleSignOut}
           username={this.state.username.split(".")[0] || "User"}
         />
-        <div>
-          <input type="file" onChange={this.onImageChange} />
+        <Paper className={classes.root}>
           <input
-            type="text"
-            placeholder="Doctor's Name"
-            onChange={e => this.setState({ doctorName: e.target.value })}
+            className={classes.input}
+            id="contained-button-file"
+            type="file"
+            onChange={this.onImageChange}
           />
-        </div>
-        <FileTable filenames={this.state.files} />
-        <div>
+          <label htmlFor="contained-button-file">
+            <Button
+              variant="contained"
+              component="span"
+              color="primary"
+              className={classes.button}
+            >
+              Upload
+              <CloudUploadIcon className={classes.rightIcon} />
+            </Button>
+          </label>
+          {/* <div>
+            <input type="file" onChange={this.onImageChange} />
+            <input
+              type="text"
+              placeholder="Doctor's Name"
+              onChange={e => this.setState({ doctorName: e.target.value })}
+            />
+          </div> */}
+          <FileList
+            filenames={this.state.files}
+            handleShare={this.handleShare}
+            handleDelete={this.handleDelete}
+          />
           <div>
-            {this.state.currentImage &&
-              (this.state.currentImage.startsWith("data:image") ? (
-                <img style={{ height: "30vh" }} src={this.state.currentImage} />
-              ) : (
-                <textarea
-                  style={{ height: "100%", width: "100%", marginLeft: 15 }}
-                  value={atob(this.state.currentImage.split("base64,")[1])}
-                />
-              ))}
+            <div>
+              {this.state.currentImage &&
+                (this.state.currentImage.startsWith("data:image") ? (
+                  <img
+                    style={{ height: "30vh" }}
+                    src={this.state.currentImage}
+                  />
+                ) : (
+                  <textarea
+                    style={{ height: "100%", width: "100%", marginLeft: 15 }}
+                    value={atob(this.state.currentImage.split("base64,")[1])}
+                  />
+                ))}
+            </div>
           </div>
-        </div>
-        <div>
-          <div>
-            {this.state.isLoading && <span>Loading...</span>}
-            {/* {this.state.files.map(filename => (
-              <div key={filename.id}>
-                <p style={{ marginLeft: 5 }}>{filename}</p>
-                <button onClick={() => this.downloadFile(filename)}>
-                  View
-                </button>
-                <button onClick={() => this.onShare(filename)}>Share</button>
-              </div>
-            ))} */}
-          </div>
-        </div>
-      </div>
+          <Snackbar
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center"
+            }}
+            open={this.state.open}
+            autoHideDuration={6000}
+            onClose={this.handleClose}
+            ContentProps={{
+              "aria-describedby": "message-id"
+            }}
+            message={<span id="message-id">{this.state.snackbarMessage}</span>}
+            action={[
+              <IconButton
+                key="close"
+                aria-label="Close"
+                color="inherit"
+                className={classes.close}
+                onClick={this.handleClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            ]}
+          />
+        </Paper>
+      </>
     ) : (
       <CircularProgress className={classes.progress} />
     );
@@ -228,3 +315,5 @@ export default class Profile extends Component {
     });
   }
 }
+
+export default withStyles(styles)(Profile);

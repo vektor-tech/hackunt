@@ -12,7 +12,10 @@ import {
   signUserOut
 } from "blockstack";
 
-const theme = createMuiTheme({ typography: { useNextVariants: true } });
+const theme = createMuiTheme({
+  typography: { useNextVariants: true },
+  palette: { type: "light" }
+});
 
 export default class App extends Component {
   constructor(props) {
