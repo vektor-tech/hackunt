@@ -20,7 +20,14 @@ const styles = {
 };
 
 function FileList(props) {
-  const { handleShare, handleDelete, shared, filenames, classes } = props;
+  const {
+    handleShare,
+    handleDelete,
+    handlePreview,
+    shared,
+    filenames,
+    classes
+  } = props;
 
   if (!filenames || filenames.length == 0)
     return <Typography className={classes.text}>No Files Found!</Typography>;
@@ -29,7 +36,7 @@ function FileList(props) {
     <List>
       {filenames.map(({ id, name }) => {
         return (
-          <ListItem key={id} button>
+          <ListItem key={id} button onClick={() => handlePreview(name)}>
             <ListItemAvatar>
               <Avatar>
                 <InsertDriveFile />

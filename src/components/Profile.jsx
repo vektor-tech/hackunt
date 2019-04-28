@@ -9,12 +9,14 @@ import {
   loadUserData,
   putFile
 } from "blockstack";
+import { readFile } from "blockstack-large-storage";
 import * as cryptico from "cryptico";
 import FileList from "./FileList.jsx";
 import MainAppBar from "./MainAppBar.jsx";
 import ShareDialog from "./ShareDialog.jsx";
 import SnackBarMessage from "./SnackBarMessage.jsx";
 import ViewPatientFile from "./ViewPatientFile.jsx";
+import FilePreviewDialog from "./FilePreviewDialog.jsx";
 
 const styles = theme => ({
   button: {
@@ -36,7 +38,8 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      currentImage: "",
+      fileContent: "Empty",
+      filePreviewDialogOpen: false,
       files: [],
       sharedFiles: [],
       username: "",
@@ -125,10 +128,16 @@ class Profile extends Component {
 
   // downloads the given filename from user's gaia hub
   downloadFile(filename) {
+    this.setState({ isLoading: true, fileContent: "Empty" });
     // download file
-    getFile(filename, { decrypt: true }).then(res => {
-      this.setState({ currentImage: res });
-    });
+    readFile(filename, { decrypt: true })
+      .then(res => {
+        this.setState({ fileContent: res, isLoading: false });
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({ isLoading: false, fileContent: "Error Occured!" });
+      });
   }
 
   // when View Patient's file is clicked
@@ -153,7 +162,7 @@ class Profile extends Component {
       // decrypts encrypted file content
       let decrypted = cryptico.decrypt(filecontent, privatekey);
 
-      this.setState({ currentImage: decrypted.plaintext });
+      this.setState({ fileContent: decrypted.plaintext });
     });
   }
 
@@ -224,8 +233,17 @@ class Profile extends Component {
     this.setState({ shareDialogOpen: false });
   };
 
+  handleFilePreviewDialogClose = () => {
+    this.setState({ filePreviewDialogOpen: false });
+  };
+
   handleTabChange = (_, value) => {
     this.setState({ tabValue: value });
+  };
+
+  previewOpen = filename => {
+    this.setState({ filePreviewDialogOpen: true });
+    this.downloadFile(filename);
   };
 
   render() {
@@ -270,42 +288,36 @@ class Profile extends Component {
               filenames={this.state.files}
               handleShare={this.handleShare}
               handleDelete={this.handleDelete}
+              handlePreview={this.previewOpen}
             />
           )}
           {tabValue == 1 && (
             <FileList
               filenames={this.state.sharedFiles}
               handleDelete={this.handleDelete}
+              handlePreview={this.previewOpen}
               shared={true}
             />
           )}
-          {tabValue == 2 && <ViewPatientFile handleSubmit={this.onDoctorView} />}
-          {/* <div>
-            <div>
-              {this.state.currentImage &&
-                (this.state.currentImage.startsWith("data:image") ? (
-                  <img
-                    style={{ height: "30vh" }}
-                    src={this.state.currentImage}
-                  />
-                ) : (
-                  <textarea
-                    style={{ height: "100%", width: "100%", marginLeft: 15 }}
-                    value={atob(this.state.currentImage.split("base64,")[1])}
-                  />
-                ))}
-            </div>
-          </div> */}
-          <SnackBarMessage
-            message={this.state.snackbarMessage}
-            handleClose={this.handleClose}
-            open={this.state.snackBarOpen}
+          {tabValue == 2 && (
+            <ViewPatientFile handleSubmit={this.onDoctorView} />
+          )}
+          <FilePreviewDialog
+            open={this.state.filePreviewDialogOpen}
+            handleClose={this.handleFilePreviewDialogClose}
+            content={this.state.fileContent}
+            isLoading={this.state.isLoading}
           />
           <ShareDialog
             open={this.state.shareDialogOpen}
             handleClose={this.handleShareDialogClose}
             filename={this.state.shareFilename}
             handleSubmit={this.onShare}
+          />
+          <SnackBarMessage
+            message={this.state.snackbarMessage}
+            handleClose={this.handleClose}
+            open={this.state.snackBarOpen}
           />
         </Paper>
       </>
