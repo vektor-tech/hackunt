@@ -10,43 +10,58 @@ import IconButton from "@material-ui/core/IconButton";
 import { InsertDriveFile } from "@material-ui/icons";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ShareIcon from "@material-ui/icons/Share";
+import { Typography } from "@material-ui/core";
 
-const styles = {};
+const styles = {
+  text: {
+    padding: "10px",
+    textAlign: "center"
+  }
+};
 
 function FileList(props) {
-  const { handleShare, handleDelete } = props;
+  const { handleShare, handleDelete, shared, filenames, classes } = props;
+
+  if (!filenames || filenames.length == 0)
+    return <Typography className={classes.text}>No Files Found!</Typography>;
+
   return (
     <List>
-      {props.filenames.map(({ id, name }) => (
-        <ListItem key={id} button>
-          <ListItemAvatar>
-            <Avatar>
-              <InsertDriveFile />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText primary={name} />
-          <ListItemSecondaryAction>
-            <IconButton aria-label="Share" onClick={() => handleShare(name)}>
-              <ShareIcon />
-            </IconButton>
-            <IconButton aria-label="Delete" onClick={() => handleDelete(name)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
+      {filenames.map(({ id, name }) => {
+        return (
+          <ListItem key={id} button>
+            <ListItemAvatar>
+              <Avatar>
+                <InsertDriveFile />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                shared ? name.split("SHARED_")[1].split("_END_")[1] : name
+              }
+              secondary={shared && name.split("SHARED_")[1].split("_END_")[0]}
+            />
+            <ListItemSecondaryAction>
+              {!shared && (
+                <IconButton
+                  aria-label="Share"
+                  onClick={() => handleShare(name)}
+                >
+                  <ShareIcon />
+                </IconButton>
+              )}
+              <IconButton
+                aria-label="Delete"
+                onClick={() => handleDelete(name)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        );
+      })}
     </List>
   );
 }
-
-// {/* {this.state.files.map(filename => (
-//               <div key={filename.id}>
-//                 <p style={{ marginLeft: 5 }}>{filename}</p>
-//                 <button onClick={() => this.downloadFile(filename)}>
-//                   View
-//                 </button>
-//                 <button onClick={() => this.onShare(filename)}>Share</button>
-//               </div>
-//             ))} */}
 
 export default withStyles(styles)(FileList);

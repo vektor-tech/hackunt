@@ -9,14 +9,14 @@ function ViewPatientFile(props) {
       <input
         type="text"
         placeholder="Patient Filename"
-        onChange={e => this.setState({ patientFilename: e.target.value })}
+        // onChange={e => this.setState({ patientFilename: e.target.value })}
       />
       <input
         type="text"
         placeholder="Patient's Username"
-        onChange={e => this.setState({ patientUsername: e.target.value })}
+        // onChange={e => this.setState({ patientUsername: e.target.value })}
       />
-      <button onClick={this.onDoctorView}>View Patient File</button>
+      {/* <button onClick={this.onDoctorView}>View Patient File</button> */}
     </div>
   );
 }

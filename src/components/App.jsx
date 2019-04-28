@@ -14,7 +14,7 @@ import {
 
 const theme = createMuiTheme({
   typography: { useNextVariants: true },
-  palette: { type: "light" }
+  palette: { type: "dark" }
 });
 
 export default class App extends Component {

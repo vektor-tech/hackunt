@@ -1,24 +1,20 @@
 import React, { Component } from "react";
-import { CircularProgress, Button, Paper } from "@material-ui/core";
+import { Button, CircularProgress, Paper, Tabs, Tab } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import MainAppBar from "./MainAppBar.jsx";
-import FileList from "./FileList.jsx";
-import SnackBarMessage from "./SnackBarMessage.jsx";
-import ShareDialog from "./ShareDialog.jsx";
-import { writeFile, readFile } from "blockstack-large-storage";
 import {
-  isSignInPending,
-  loadUserData,
-  Person,
   getFile,
-  listFiles
+  isSignInPending,
+  listFiles,
+  loadUserData,
+  putFile
 } from "blockstack";
 import * as cryptico from "cryptico";
-import { putFile } from "blockstack/lib/storage";
-
-const avatarFallbackImage =
-  "https://s3.amazonaws.com/onename/avatar-placeholder.png";
+import FileList from "./FileList.jsx";
+import MainAppBar from "./MainAppBar.jsx";
+import ShareDialog from "./ShareDialog.jsx";
+import SnackBarMessage from "./SnackBarMessage.jsx";
+import ViewPatientFile from "./ViewPatientFile.jsx";
 
 const styles = theme => ({
   button: {
@@ -41,16 +37,8 @@ class Profile extends Component {
 
     this.state = {
       currentImage: "",
-      doctorName: "",
       files: [],
-      person: {
-        name() {
-          return "Anonymous";
-        },
-        avatarUrl() {
-          return avatarFallbackImage;
-        }
-      },
+      sharedFiles: [],
       username: "",
       isLoading: false,
       patientFilename: "",
@@ -58,7 +46,8 @@ class Profile extends Component {
       snackBarOpen: false,
       snackbarMessage: "",
       shareDialogOpen: false,
-      shareFilename: ""
+      shareFilename: "",
+      tabValue: 0
     };
 
     this.onImageChange = this.onImageChange.bind(this);
@@ -72,7 +61,15 @@ class Profile extends Component {
 
     listFiles(name => {
       this.setState({
-        files: [{ id: this.state.files.length + 1, name }, ...this.state.files]
+        files: name.startsWith("SHARED_")
+          ? [...this.state.files]
+          : [{ id: this.state.files.length + 1, name }, ...this.state.files],
+        sharedFiles: name.startsWith("SHARED_")
+          ? [
+              { id: this.state.sharedFiles.length + 1, name },
+              ...this.state.sharedFiles
+            ]
+          : [...this.state.sharedFiles]
       });
       return true;
     })
@@ -87,8 +84,8 @@ class Profile extends Component {
 
   initialSetup() {
     // check for public.json
-    for (let file of this.state.files) {
-      if (file == "public.json") return;
+    for (let { name } of this.state.files) {
+      if (name == "public.json") return;
     }
 
     // if not found generate public.json
@@ -111,7 +108,7 @@ class Profile extends Component {
 
     let reader = new FileReader();
     reader.onloadend = function() {
-      writeFile(files[0].name, reader.result, {
+      putFile(files[0].name, reader.result, {
         encrypt: true
       })
         .then(this.fetchData())
@@ -129,7 +126,7 @@ class Profile extends Component {
   // downloads the given filename from user's gaia hub
   downloadFile(filename) {
     // download file
-    readFile(filename, { decrypt: true }).then(res => {
+    getFile(filename, { decrypt: true }).then(res => {
       this.setState({ currentImage: res });
     });
   }
@@ -151,7 +148,9 @@ class Profile extends Component {
 
     // get file from patient's gaia hub
     getFile(
-      `${this.state.username.split(".")[0]}_${this.state.patientFilename}`,
+      `SHARED_${this.state.username.split(".")[0]}_END_${
+        this.state.patientFilename
+      }`,
       {
         username: `${this.state.patientUsername}.id.blockstack`,
         decrypt: false
@@ -185,7 +184,7 @@ class Profile extends Component {
             let encrypted = cryptico.encrypt(filecontent, rcvrpublickey);
 
             // make a copy that can be decrypted by doctor
-            putFile(`${doctorName}_${filename}`, encrypted.cipher, {
+            putFile(`SHARED_${doctorName}_END_${filename}`, encrypted.cipher, {
               encrypt: false
             })
               .then(_ =>
@@ -216,12 +215,11 @@ class Profile extends Component {
   handleDelete = filename => {
     this.setState({
       snackBarOpen: true,
-      snackbarMessage: "Deleting " + filename
+      snackbarMessage: "Deletion not supported!"
     });
   };
 
   handleShare = filename => {
-    console.log(`share ${filename}`);
     this.setState({
       shareDialogOpen: true,
       shareFilename: filename
@@ -232,8 +230,13 @@ class Profile extends Component {
     this.setState({ shareDialogOpen: false });
   };
 
+  handleTabChange = (_, value) => {
+    this.setState({ tabValue: value });
+  };
+
   render() {
     const { handleSignOut, classes } = this.props;
+    const { tabValue } = this.state;
     return !isSignInPending() ? (
       <>
         <MainAppBar
@@ -258,20 +261,32 @@ class Profile extends Component {
               <CloudUploadIcon className={classes.rightIcon} />
             </Button>
           </label>
-          {/* <div>
-            <input type="file" onChange={this.onImageChange} />
-            <input
-              type="text"
-              placeholder="Doctor's Name"
-              onChange={e => this.setState({ doctorName: e.target.value })}
+          <Tabs
+            value={this.state.tabValue}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={this.handleTabChange}
+          >
+            <Tab label="My Files" />
+            <Tab label="Shared" />
+            <Tab label="Shared with me" />
+          </Tabs>
+          {tabValue == 0 && (
+            <FileList
+              filenames={this.state.files}
+              handleShare={this.handleShare}
+              handleDelete={this.handleDelete}
             />
-          </div> */}
-          <FileList
-            filenames={this.state.files}
-            handleShare={this.handleShare}
-            handleDelete={this.handleDelete}
-          />
-          <div>
+          )}
+          {tabValue == 1 && (
+            <FileList
+              filenames={this.state.sharedFiles}
+              handleDelete={this.handleDelete}
+              shared={true}
+            />
+          )}
+          {tabValue == 2 && <ViewPatientFile />}
+          {/* <div>
             <div>
               {this.state.currentImage &&
                 (this.state.currentImage.startsWith("data:image") ? (
@@ -286,7 +301,7 @@ class Profile extends Component {
                   />
                 ))}
             </div>
-          </div>
+          </div> */}
           <SnackBarMessage
             message={this.state.snackbarMessage}
             handleClose={this.handleClose}
@@ -311,7 +326,6 @@ class Profile extends Component {
 
   componentWillMount() {
     this.setState({
-      person: new Person(loadUserData().profile),
       username: loadUserData().username
     });
   }
