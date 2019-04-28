@@ -132,12 +132,8 @@ class Profile extends Component {
   }
 
   // when View Patient's file is clicked
-  onDoctorView() {
-    if (
-      !this.state.username ||
-      !this.state.patientFilename ||
-      !this.state.patientUsername
-    ) {
+  onDoctorView(patientUsername, patientFilename) {
+    if (!this.state.username || !patientFilename || !patientUsername) {
       console.error("Needed fields not provided!");
       return;
     }
@@ -148,11 +144,9 @@ class Profile extends Component {
 
     // get file from patient's gaia hub
     getFile(
-      `SHARED_${this.state.username.split(".")[0]}_END_${
-        this.state.patientFilename
-      }`,
+      `SHARED_${this.state.username.split(".")[0]}_END_${patientFilename}`,
       {
-        username: `${this.state.patientUsername}.id.blockstack`,
+        username: `${patientUsername}.id.blockstack`,
         decrypt: false
       }
     ).then(filecontent => {
@@ -285,7 +279,7 @@ class Profile extends Component {
               shared={true}
             />
           )}
-          {tabValue == 2 && <ViewPatientFile />}
+          {tabValue == 2 && <ViewPatientFile handleSubmit={this.onDoctorView} />}
           {/* <div>
             <div>
               {this.state.currentImage &&
