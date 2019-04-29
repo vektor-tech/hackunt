@@ -1,12 +1,6 @@
 import React, { Component } from "react";
-import {
-  Navbar,
-  Nav,
-  Card,
-  Button,
-  Carousel,
-  Jumbotron
-} from "react-bootstrap";
+import { Navbar, Nav, Card, Carousel, Jumbotron } from "react-bootstrap";
+import { Button } from "@material-ui/core";
 
 export default class Signin extends Component {
   constructor(props) {
@@ -30,7 +24,12 @@ export default class Signin extends Component {
                 <Nav.Link href="#features">Features</Nav.Link>
                 <Nav.Link href="#developer">Developer</Nav.Link>
               </Nav>
-              <Button className="ml-auto" onClick={handleSignIn.bind(this)}>
+              <Button
+                variant="contained"
+                color="primary"
+                className="ml-auto"
+                onClick={handleSignIn.bind(this)}
+              >
                 Sign Up/In
               </Button>
             </Navbar.Collapse>
@@ -45,7 +44,11 @@ export default class Signin extends Component {
                   responsible for your health records.
                 </p>
                 <p>
-                  <Button variant="primary" onClick={handleSignIn.bind(this)}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSignIn.bind(this)}
+                  >
                     Get Started
                   </Button>
                 </p>
