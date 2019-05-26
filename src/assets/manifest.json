@@ -1,10 +1,10 @@
 {
   "name": "DHCS",
-  "start_url": "https://dhcs.netlify.com",
+  "start_url": "https://dhcs.live",
   "description": "Decentralized Health Care System",
   "icons": [
     {
-      "src": "https://dhcs.netlify.com/icon-192x192.png",
+      "src": "https://dhcs.live/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     }

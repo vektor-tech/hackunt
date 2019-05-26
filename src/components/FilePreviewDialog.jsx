@@ -16,7 +16,7 @@ function Viewer({ content }) {
   if (content.startsWith("data")) {
     return <iframe width="100%" src={content} />;
   }
-  return <p>{content}</p>;
+  return content;
 }
 
 function FilePreviewDialog({ open, handleClose, content, isLoading, classes }) {
