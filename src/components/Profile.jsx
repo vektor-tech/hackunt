@@ -7,7 +7,8 @@ import {
   isSignInPending,
   listFiles,
   loadUserData,
-  putFile
+  putFile,
+  deleteFile
 } from "blockstack";
 import * as cryptico from "cryptico";
 import FileList from "./FileList.jsx";
@@ -222,10 +223,23 @@ class Profile extends Component {
   }
 
   handleDelete = filename => {
-    this.setState({
-      snackBarOpen: true,
-      snackbarMessage: "Deletion not supported!"
-    });
+    console.log("File to delete: ", filename);
+
+    deleteFile(filename)
+      .then(() => {
+        this.setState({
+          snackBarOpen: true,
+          snackbarMessage: `${filename} deleted!`
+        });
+      })
+      .catch(e => {
+        console.error(e);
+
+        this.setState({
+          snackBarOpen: true,
+          snackbarMessage: `Error deleting ${filename}`
+        });
+      });
   };
 
   handleShare = filename => {
