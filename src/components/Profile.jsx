@@ -114,7 +114,7 @@ class Profile extends Component {
       putFile(files[0].name, reader.result, {
         encrypt: true
       })
-        .then(this.fetchData())
+        .then(() => this.fetchData())
         .finally(() =>
           this.setState({
             isLoading: false,
@@ -197,12 +197,13 @@ class Profile extends Component {
             putFile(`SHARED_${doctorName}_END_${filename}`, encrypted.cipher, {
               encrypt: false
             })
-              .then(_ =>
+              .then(_ => {
                 this.setState({
                   snackBarOpen: true,
                   snackbarMessage: `Shared ${filename} with ${doctorName}!`
-                })
-              )
+                });
+                this.fetchData();
+              })
               .catch(err =>
                 console.error("Error on storing doctor's file", err)
               );
@@ -214,7 +215,7 @@ class Profile extends Component {
       );
   };
 
-  handleClose(event, reason) {
+  handleClose(_, reason) {
     if (reason === "clickaway") {
       return;
     }
@@ -231,6 +232,7 @@ class Profile extends Component {
           snackBarOpen: true,
           snackbarMessage: `${filename} deleted!`
         });
+        this.fetchData();
       })
       .catch(e => {
         console.error(e);

@@ -35,6 +35,7 @@ function FileList(props) {
   return (
     <List>
       {filenames.map(({ id, name }) => {
+        if (name == "public.json") return;
         return (
           <ListItem key={id} button onClick={() => handlePreview(name, shared)}>
             <ListItemAvatar>
