@@ -9,7 +9,6 @@ import {
   loadUserData,
   putFile
 } from "blockstack";
-import { readFile } from "blockstack-large-storage";
 import * as cryptico from "cryptico";
 import FileList from "./FileList.jsx";
 import MainAppBar from "./MainAppBar.jsx";
@@ -130,7 +129,7 @@ class Profile extends Component {
   downloadFile(filename) {
     this.setState({ isLoading: true, fileContent: "Empty" });
     // download file
-    readFile(filename, { decrypt: true })
+    getFile(filename, { decrypt: true })
       .then(res => {
         this.setState({ fileContent: res, isLoading: false });
       })
