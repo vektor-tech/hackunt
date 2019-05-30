@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Navbar, Nav, Card, Carousel, Jumbotron } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Card,
+  Carousel,
+  Jumbotron,
+  Image,
+  Container
+} from "react-bootstrap";
 import { Button } from "@material-ui/core";
 
 export default class Signin extends Component {
@@ -22,7 +30,7 @@ export default class Signin extends Component {
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav justify className="mx-auto navheader">
                 <Nav.Link href="#features">Features</Nav.Link>
-                <Nav.Link href="#developer">Developer</Nav.Link>
+                <Nav.Link href="#developer">Developers</Nav.Link>
               </Nav>
               <Button
                 variant="contained"
@@ -36,7 +44,7 @@ export default class Signin extends Component {
           </Navbar>
           <div className="container" id="home">
             <div className="row justify-content-center">
-              <Jumbotron className="col-5 tr  text-left align-self-center">
+              <Jumbotron className="col-6 tr  text-left ">
                 <h1>A platform for sharing health records.</h1>
                 <p>
                   You have every rights to your health records. You decide where
@@ -53,43 +61,36 @@ export default class Signin extends Component {
                   </Button>
                 </p>
               </Jumbotron>
-
-              <Jumbotron className="col-5 tr align-self-center">
-                <img src="./home.jpg" width="100%" />
-              </Jumbotron>
+              <Image
+                src="./home.png"
+                className="col-6 tr align-self-center"
+                fluid
+              />
             </div>
           </div>
           <div className="container" id="features">
             <h3 className="mb-4">Features</h3>
             <Carousel className="carousel">
               <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="./carousel1.jpg"
-                  alt="First slide"
-                />
+                <Container>
+                  <Image src="./carousel1.png" />
+                </Container>
                 <Carousel.Caption>
                   <p>Store all your health records securely.</p>
                 </Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="./carousel2.jpg"
-                  alt="Third slide"
-                />
-
+                <Container>
+                  <Image src="./carousel2.png" />
+                </Container>
                 <Carousel.Caption>
                   <p>Share it with only health personnel you trust.</p>
                 </Carousel.Caption>
               </Carousel.Item>
               <Carousel.Item>
-                <img
-                  className="d-block w-100"
-                  src="./carousel3.jpg"
-                  alt="Third slide"
-                />
-
+                <Container>
+                  <Image src="./carousel3.png" />
+                </Container>
                 <Carousel.Caption>
                   <p>Manage your shared documents.</p>
                 </Carousel.Caption>
@@ -98,7 +99,6 @@ export default class Signin extends Component {
           </div>
           <div className="container" id="developer">
             <h3>Developers</h3>
-
             <div className="row justify-content-center">
               <Jumbotron className="col-4 tr align-self-center">
                 <Card className="border-0 tr">
@@ -129,7 +129,6 @@ export default class Signin extends Component {
                   </Card.Body>
                 </Card>
               </Jumbotron>
-
               <Jumbotron className="col-4 tr align-self-center">
                 <Card className="border-0 tr">
                   <Card.Img variant="top" className="circle" src="./sl.jpg" />
