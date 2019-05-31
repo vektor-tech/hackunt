@@ -8,7 +8,8 @@ const ManifestAssetPlugin = new CopyWebpackPlugin([
   { from: "src/assets/manifest.json", to: "manifest.json" }
 ]);
 const HeadersAssetPlugin = new CopyWebpackPlugin([
-  { from: "./_headers", to: "." }
+  { from: "./_headers", to: "." },
+  { from: "./_redirects", to: "."}
 ]);
 const IconAssetPlugin = new CopyWebpackPlugin([
   { from: "src/images/icon-192x192.png", to: "icon-192x192.png" },
